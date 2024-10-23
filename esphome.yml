@@ -1,0 +1,33 @@
+# ESPHome Motion Detection Component
+
+This repository contains a custom ESPHome component for motion detection based on image processing with the Xiao S3 and a 5MP camera module.
+
+## Usage
+
+1. Add the following to your ESPHome YAML configuration:
+
+```yaml
+external_components:
+  - source: github://swedan333/esphome_cameraMotionDetectionComponent.git
+    components: [binary_sensor]
+
+camera:
+  - platform: esp32
+    model: OV2640
+    name: "Xiao S3 Camera"
+    resolution: 640x480
+    pixel_format: RGB565
+
+binary_sensor:
+  - platform: custom
+    id: motion_sensor
+    name: "Motion Detected in ROI"
+    lambda: |-
+      return {new MotionDetectionComponent(
+        id(xiao_s3_camera),
+        0.1, 0.1,  # x_start and y_start in percentage
+        0.5, 0.5,  # width and height in percentage
+        10,        # Motion sensitivity threshold
+        2,         # Pixel spacing
+        2.0        # FPS for motion detection
+      )};
